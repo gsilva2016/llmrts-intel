@@ -1,0 +1,64 @@
+FROM ubuntu:22.04
+
+
+WORKDIR /app
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+ARG BUILD_DEPENDENCIES="curl wget build-essential git clinfo vulkan-tools cmake python3-pip vim lsb-release software-properties-common gnupg git-lfs gpg-agent python-is-python3"
+RUN apt -y update && \
+    apt install -y ${BUILD_DEPENDENCIES} && \
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+RUN apt -y update && apt install -y wget && \
+    rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+
+RUN mkdir neo; \
+cd neo; \
+wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.16900.23/intel-igc-core_1.0.16900.23_amd64.deb; \
+wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.16900.23/intel-igc-opencl_1.0.16900.23_amd64.deb; \
+wget https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/intel-level-zero-gpu-dbgsym_1.3.29735.20_amd64.ddeb; \
+wget https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/intel-level-zero-gpu_1.3.29735.20_amd64.deb; \
+wget https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/intel-opencl-icd-dbgsym_24.22.29735.20_amd64.ddeb; \
+wget https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/intel-opencl-icd_24.22.29735.20_amd64.deb; \
+wget https://github.com/intel/compute-runtime/releases/download/24.22.29735.20/libigdgmm12_22.3.19_amd64.deb; \
+dpkg -i *.deb
+
+
+#RUN python3 -m pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly mlc-ai-nightly
+
+RUN wget -qO - https://repositories.intel.com/gpu/intel-graphics.key | gpg --dearmor --output /usr/share/keyrings/intel-graphics.gpg; \
+echo "deb [arch=amd64,i386 signed-by=/usr/share/keyrings/intel-graphics.gpg] https://repositories.intel.com/gpu/ubuntu jammy client" | \
+tee /etc/apt/sources.list.d/intel-gpu-jammy.list; \
+apt update; apt install level-zero -y
+
+RUN wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null; \
+echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list; \
+apt update; \
+apt install -y intel-oneapi-common-vars=2024.0.0-49406 \
+  intel-oneapi-common-oneapi-vars=2024.0.0-49406 \
+  intel-oneapi-diagnostics-utility=2024.0.0-49093 \
+  intel-oneapi-compiler-dpcpp-cpp=2024.0.2-49895 \
+  intel-oneapi-dpcpp-ct=2024.0.0-49381 \
+  intel-oneapi-mkl=2024.0.0-49656 \
+  intel-oneapi-mkl-devel=2024.0.0-49656 \
+  intel-oneapi-mpi=2021.11.0-49493 \
+  intel-oneapi-mpi-devel=2021.11.0-49493 \
+  intel-oneapi-dal=2024.0.1-25 \
+  intel-oneapi-dal-devel=2024.0.1-25 \
+  intel-oneapi-ippcp=2021.9.1-5 \
+  intel-oneapi-ippcp-devel=2021.9.1-5 \
+  intel-oneapi-ipp=2021.10.1-13 \
+  intel-oneapi-ipp-devel=2021.10.1-13 \
+  intel-oneapi-tlt=2024.0.0-352 \
+  intel-oneapi-ccl=2021.11.2-5 \
+  intel-oneapi-ccl-devel=2021.11.2-5 \
+  intel-oneapi-dnnl-devel=2024.0.0-49521 \
+  intel-oneapi-dnnl=2024.0.0-49521 \
+  intel-oneapi-tcm-1.0=1.0.0-435
+
+RUN pip3 install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+RUN pip3 install datasets neural_speed
+RUN pip3 install transformers==4.37.0
+
+# source /opt/intel/oneapi/setvars.sh
+COPY qwen2-0.5B-Instruct-ipexllm.py .
+COPY qwen2-0.5B-Instruct-q4fp16-ipexllm.py .
