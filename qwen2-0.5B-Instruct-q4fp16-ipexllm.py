@@ -8,7 +8,7 @@ from ipex_llm import optimize_model
 #import intel_extension_for_pytorch as ipex
 import time
 
-device = "xpu" # the device to load the model onto
+device = "xpu:0" # the device to load the model onto
 device_map = device
 
 model = AutoModelForCausalLM.from_pretrained(
@@ -29,7 +29,6 @@ model = model.to(device)
 print ("load tokenizer")
 #print(model.dtype)
 #print(model)
-start_time = time.time()
 tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2-0.5B-Instruct", trust_remote_code=True)
 print("apply chat template")
 
@@ -52,7 +51,14 @@ generated_ids = model.generate(
                 max_new_tokens=512
                 )
 torch.xpu.synchronize()
-print("Generate completed...")
+print("Generate completed...throwing away and performing another")
+
+start_time = time.time()
+generated_ids = model.generate(
+            model_inputs.input_ids,
+                max_new_tokens=512
+                )
+torch.xpu.synchronize()
 tokens_len = len(generated_ids)
 
 generated_ids = [

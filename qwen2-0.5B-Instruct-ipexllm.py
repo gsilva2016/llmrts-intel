@@ -7,7 +7,7 @@ from ipex_llm.transformers import AutoModelForCausalLM
 #import intel_extension_for_pytorch as ipex
 import time
 
-device = "xpu" # the device to load the model onto
+device = "xpu:0" # the device to load the model onto
 device_map = device
 
 model = AutoModelForCausalLM.from_pretrained(
@@ -38,12 +38,19 @@ text = tokenizer.apply_chat_template(
                     )
 model_inputs = tokenizer([text], return_tensors="pt").to(device)
 
+
 print("Calling generate...")
 generated_ids = model.generate(
             model_inputs.input_ids,
                 max_new_tokens=512
                 )
-print("Generate completed...")
+
+print("Generate completed...throwing away and doing another")
+start_time = time.time()
+generated_ids = model.generate(
+            model_inputs.input_ids,
+                max_new_tokens=512
+                )
 tokens_len = len(generated_ids)
 
 generated_ids = [
