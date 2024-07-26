@@ -1,4 +1,4 @@
-# Evaluate Inference Runtimes for LLM/DL and Intel Hardware
+# Evaluate Inference Runtimes for LLM/DL Models and Intel Hardware
 
 # Build Containers
 
