@@ -4,7 +4,9 @@
 
 Build all containers for MLC-AI, IPEX-LLM, and IPEX-XPU.
 
+```
 ./build.sh
+```
 
 ## MLC-AI LLM
 
