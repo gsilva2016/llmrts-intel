@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 WORKDIR /app
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
-ARG BUILD_DEPENDENCIES="curl wget build-essential git clinfo vulkan-tools cmake python3-pip vim lsb-release software-properties-common gnupg git-lfs gpg-agent python-is-python3"
+ARG BUILD_DEPENDENCIES="curl wget build-essential git clinfo vulkan-tools cmake python3-pip vim lsb-release software-properties-common gnupg git-lfs gpg-agent python-is-python3 python3-opencv"
 RUN apt -y update && \
     apt install -y ${BUILD_DEPENDENCIES} && \
     rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
@@ -62,3 +62,7 @@ RUN pip3 install transformers==4.37.0
 # source /opt/intel/oneapi/setvars.sh
 COPY qwen2-0.5B-Instruct-ipexllm.py .
 COPY qwen2-0.5B-Instruct-q4fp16-ipexllm.py .
+COPY yolov5-torch-xpu-camera.py .
+COPY entrypoint.sh .
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["/bin/bash"]
