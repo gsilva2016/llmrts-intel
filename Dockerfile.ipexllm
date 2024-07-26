@@ -62,3 +62,7 @@ RUN pip3 install transformers==4.37.0
 # source /opt/intel/oneapi/setvars.sh
 COPY qwen2-0.5B-Instruct-ipexllm.py .
 COPY qwen2-0.5B-Instruct-q4fp16-ipexllm.py .
+
+COPY entrypoint.sh .
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["/bin/bash"]
