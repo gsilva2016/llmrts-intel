@@ -58,6 +58,7 @@ apt install -y intel-oneapi-common-vars=2024.0.0-49406 \
 RUN pip3 install --pre --upgrade ipex-llm[xpu] --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
 RUN pip3 install datasets neural_speed
 RUN pip3 install transformers==4.37.0
+RUN pip3 install "openvino>=2024.2.0"
 
 # source /opt/intel/oneapi/setvars.sh
 COPY qwen2-0.5B-Instruct-ipexllm.py .
