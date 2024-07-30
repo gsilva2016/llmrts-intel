@@ -8,3 +8,6 @@ docker build -t ipex-llm:1.0 -f Dockerfile.ipexllm .
 
 echo "Building ipex-xpu container"
 docker build -t ipex-xpu:1.0 -f Dockerfile.ipex-xpu .
+
+echo "Building openvino-llm container"
+docker build -t openvino:1.0 -f Dockerfile.openvino .
