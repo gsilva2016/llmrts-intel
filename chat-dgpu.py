@@ -40,7 +40,7 @@ if __name__ == "__main__":
                         help='Required. maximun length of output')
     parser.add_argument('-d',
                         '--device',
-                        default='GPU.0',
+                        default='GPU.1',
                         required=False,
                         type=str,
                         help='Required. device for inference')
