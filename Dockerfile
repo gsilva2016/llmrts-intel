@@ -13,5 +13,5 @@ RUN apt -y update && apt install -y wget && \
 
 RUN python3 -m pip install --pre -U -f https://mlc.ai/wheels mlc-llm-nightly mlc-ai-nightly
 
-COPY qwen2-0.5B-Instruct-mlcllm-intel.sh .
-COPY qwen2-0.5B-Instruct-mlcllm-q4fp16-intel.sh* .
+COPY qwen2-0.5B-Instruct-mlcllm-intel.py .
+COPY qwen2-0.5B-Instruct-mlcllm-q4fp16-intel.py  .
