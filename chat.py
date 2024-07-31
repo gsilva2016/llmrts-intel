@@ -82,7 +82,7 @@ if __name__ == "__main__":
                 max_new_tokens=512
                 )
 
-    tokens_len = len(generated_ids)
+    tokens_len = len(generated_ids[0])
     elapsed_time = time.time() - start_time
     print(f"tps: { tokens_len / elapsed_time }")
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
             model_inputs.input_ids,
                 max_new_tokens=512
                 )
-    tokens_len = len(generated_ids)
+    tokens_len = len(generated_ids[0])
 
 
     generated_ids = [
